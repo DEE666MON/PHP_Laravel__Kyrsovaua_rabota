@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use App\Models\Message;
 use App\Models\ModerationAction;
 use App\Models\User;
@@ -65,5 +66,14 @@ class AdminController extends Controller
         }
         $user->update(['role' => $data['role']]);
         return back()->with('success', "Роль обновлена: {$data['role']}");
+    }
+    public function chats()
+    {
+        $chats = Chat::withTrashed()
+            ->withCount('messages')
+            ->orderByRaw('deleted_at IS NULL DESC')
+            ->orderBy('name')
+            ->get();
+        return view('admin.chats', compact('chats'));
     }
 }

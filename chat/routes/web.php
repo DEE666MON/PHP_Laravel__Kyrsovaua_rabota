@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chats/create',  [ChatController::class, 'create'])->name('chat.create');
     Route::post('/chats',        [ChatController::class, 'storeChat'])->name('chat.storeChat');
     Route::get('/chats/{chat}',  [ChatController::class, 'show'])->name('chat.show');
+    Route::delete('/chats/{chat}', [ChatController::class, 'destroyChat'])->name('chats.destroy');
 
     // Сообщения
     Route::post('/chats/{chat}/messages', [ChatController::class, 'storeMessage'])
@@ -49,6 +50,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
         Route::post('/users/{user}/role', [AdminController::class, 'updateRole'])
             ->name('admin.users.role');
+        Route::get('/chats', [AdminController::class, 'chats'])->name('admin.chats');
+        Route::post('/chats/{id}/restore', [ChatController::class, 'restoreChat'])
+            ->name('admin.chats.restore');
     });
 });
 

@@ -1,0 +1,11 @@
+php artisan make:migration НАЗВАНИЕ
+php artisan migrate
+php artisan optimize:clear
+
+php artisan storage:link
+
+php artisan tinker
+
+php artisan view:clear
+
+composer dump-autoload

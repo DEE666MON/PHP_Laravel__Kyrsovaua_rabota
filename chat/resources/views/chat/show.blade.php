@@ -58,10 +58,19 @@
         @csrf
         <textarea name="body" placeholder="Сообщение в #{{ $chat->name }}…">{{ old('body') }}</textarea>
         <div class="row">
-            <input type="file" name="image" accept="image/*">
+            <label for="image-input" class="attach-btn" title="Прикрепить картинку">📎</label>
+            <input type="file" name="image" id="image-input" accept="image/*" style="display:none">
+            <span id="attach-indicator" style="font-size:12px; color:#10b981; display:none;">✓ файл прикреплён</span>
             <button class="btn btn-primary" type="submit">Отправить</button>
         </div>
     </form>
+
+    <script>
+        document.getElementById('image-input')?.addEventListener('change', function () {
+            const ind = document.getElementById('attach-indicator');
+            ind.style.display = this.files.length ? 'inline' : 'none';
+        });
+    </script>
 @endsection
 
 @push('scripts')

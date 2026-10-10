@@ -139,6 +139,24 @@ class ChatController extends Controller
         return redirect()->route('chat.index')->with('success', 'Пользователь удалён');
     }
 
+    // Модерация: удалить чат.
+    public function destroyChat(Chat $chat)
+    {
+        Gate::authorize('delete', $chat);
+        $chat->delete();
+        return redirect()->route('chat.index')
+            ->with('success', "Чат «{$chat->name}» удалён");
+    }
+
+    public function restoreChat(int $id)
+    {
+        $chat = Chat::withTrashed()->findOrFail($id);
+        Gate::authorize('restore', $chat);
+        $chat->restore();
+        return redirect()->route('admin.chats')
+            ->with('success', "Чат «{$chat->name}» восстановлен");
+    }
+
     // Сериализация сообщений для JSON-ответов.
     private function mapMessages($messages): array
     {

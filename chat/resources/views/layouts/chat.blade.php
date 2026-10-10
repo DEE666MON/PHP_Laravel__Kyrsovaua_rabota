@@ -67,6 +67,13 @@
             }
             form.composer .row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
             .card { background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+            .attach-btn {
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 36px; height: 36px; border-radius: 8px;
+                background: #e5e7eb; cursor: pointer; font-size: 18px;
+                transition: background .15s; user-select: none;
+            }
+            .attach-btn:hover { background: #d1d5db; }
         </style>
     </head>
     <body>
@@ -81,27 +88,48 @@
 
                 <ul class="chat-list" id="chat-list">
                     @foreach($chats ?? [] as $c)
-                        <li>
+                        <li style="display:flex; align-items:center; gap:4px;">
                             <a href="{{ route('chat.show', $c) }}"
-                            class="{{ isset($chat) && $chat->id === $c->id ? 'active' : '' }}">
+                            class="{{ isset($chat) && $chat->id === $c->id ? 'active' : '' }}"
+                            style="flex:1;">
                                 # {{ $c->name }}
                                 <span style="color:#9ca3af;font-size:12px;">({{ $c->messages_count ?? '' }})</span>
                             </a>
+
+                            @if(auth()->user()->isModerator())
+                                <form method="POST" action="{{ route('chats.destroy', $c) }}"
+                                    style="margin:0;"
+                                    onsubmit="return confirm('Удалить чат «{{ $c->name }}»?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit"
+                                            title="Удалить чат"
+                                            style="background:transparent;border:none;color:#ef4444;cursor:pointer;font-size:14px;">
+                                        ×
+                                    </button>
+                                </form>
+                            @endif
                         </li>
                     @endforeach
                 </ul>
 
                 <div class="user-block">
                     @auth
-                        <div>
-                            {{ auth()->user()->name }}
-                            @if(auth()->user()->isAdmin())
-                                <span class="role-badge admin">admin</span>
-                            @elseif(auth()->user()->isPureModerator())
-                                <span class="role-badge mod">мод</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            @if(auth()->user()->avatar_path)
+                                <img src="{{ Storage::disk('public')->url(auth()->user()->avatar_path) }}"
+                                    style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
                             @endif
+                            <div>
+                                {{ auth()->user()->name }}
+                                @if(auth()->user()->isAdmin())
+                                    <span class="role-badge admin">admin</span>
+                                @elseif(auth()->user()->isPureModerator())
+                                    <span class="role-badge mod">мод</span>
+                                @endif
+                            </div>
                         </div>
                         <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+                            <a href="{{ route('profile.edit') }}">⚙ Профиль</a>
                             @if(auth()->user()->isModerator())
                                 <a href="{{ route('moderator.applications') }}">📋 Заявки</a>
                             @endif
@@ -111,6 +139,7 @@
                             @if(auth()->user()->isAdmin())
                                 <a href="{{ route('admin.actions') }}">🛡 Действия</a>
                                 <a href="{{ route('admin.users') }}">👥 Пользователи</a>
+                                <a href="{{ route('admin.chats') }}">💬 Чаты</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
