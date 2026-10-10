@@ -8,6 +8,15 @@ class UserPolicy
 {
     public function delete(User $user, User $target): bool
     {
-        return $user->isModerator() && $user->id !== $target->id;
+        if ($user->id === $target->id) {
+            return false;
+        }
+        if ($user->isAdmin()) {
+            return in_array($target->role, ['user', 'moderator'], true);
+        }
+        if ($user->isPureModerator()) {
+            return $target->role === 'user';
+        }
+        return false;
     }
 }

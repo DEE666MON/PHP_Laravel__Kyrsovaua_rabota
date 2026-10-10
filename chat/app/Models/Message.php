@@ -10,7 +10,12 @@ class Message extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'body', 'image_path'];
+    protected $fillable = ['chat_id', 'user_id', 'body', 'image_path'];
+
+    public function chat(): BelongsTo
+    {
+        return $this->belongsTo(Chat::class);
+    }
 
     public function user(): BelongsTo
     {
