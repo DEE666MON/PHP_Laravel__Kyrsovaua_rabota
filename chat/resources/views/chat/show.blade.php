@@ -27,7 +27,7 @@
                     <div class="body">{{ $message->body }}</div>
                 @endif
                 @if($message->image_path)
-                    <img src="{{ Storage::url($message->image_path) }}" alt="img">
+                    <img src="{{ Storage::disk('public')->url($message->image_path) }}" alt="img">
                 @endif
 
                 @if(auth()->user()->isModerator())

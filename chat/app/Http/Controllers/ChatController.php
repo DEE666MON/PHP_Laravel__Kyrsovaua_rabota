@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+class ChatController extends Controller
 {
     public function index(Request $request)
     {
@@ -147,7 +149,9 @@ use Illuminate\Support\Str;
             'user_name'    => $m->user?->name ?? 'Удалённый',
             'is_moderator' => $m->user?->isModerator() ?? false,
             'body'         => $m->body,
-            'image_url'    => $m->image_path ? Storage::url($m->image_path) : null,
+            'image_url'    => $m->image_path
+                ? Storage::disk('public')->url($m->image_path)
+                : null,
             'created_at'   => $m->created_at->format('d.m.Y H:i'),
         ])->all();
     }
